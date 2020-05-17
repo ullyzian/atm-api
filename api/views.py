@@ -134,8 +134,11 @@ class Balance(APIView):
     def get(self, request, num, *args, **kwargs):
         # get and check customer requested info
         card = get_object_or_404(CreditCard, number=num)
+        print(card)
         user = get_object_or_404(User, username=request.user)
+        print(user)
         account = get_object_or_404(BankAccount, pk=card.account.id, customer=user.id)
+        print(account)
 
         return Response({"balance": account.balance})
 
