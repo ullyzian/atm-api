@@ -135,9 +135,9 @@ class Balance(APIView):
         # get and check customer requested info
         card = get_object_or_404(CreditCard, number=num)
         print(card)
-        user = get_object_or_404(User, username=request.user)
-        print(user)
-        account = get_object_or_404(BankAccount, pk=card.account.id, customer=user.id)
+        customer = get_object_or_404(Customer, user=request.user.id)
+        print(customer)
+        account = get_object_or_404(BankAccount, pk=card.account.id, customer=customer.id)
         print(account)
 
         return Response({"balance": account.balance})
