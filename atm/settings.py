@@ -15,12 +15,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = True
 
-# SECURITY WARNING: don't run with debug turned on in production!
-ENVIROMENT = os.getenv("ENVIROMENT")
-if ENVIROMENT == "production":
-    DEBUG = False
-    ALLOWED_HOSTS = ["https://atm-bankomat.herokuapp.com"]
-
 
 # Application definition
 
@@ -119,6 +113,22 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = "/static/"
+
+# SECURITY WARNING: don't run with debug turned on in production!
+ENVIROMENT = os.getenv("ENVIROMENT")
+if ENVIROMENT == "production":
+    DEBUG = False
+    ALLOWED_HOSTS = ["https://atm-bankomat.herokuapp.com"]
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": "d3otalm9cdk2k7",
+            "USER": "chgraubyplyivd",
+            "PASSWORD": "ecef52097cb47b3518ff46fef79082055dd807018cdfbdd557ffb79f870f2741",
+            "HOST": "ec2-54-217-213-79.eu-west-1.compute.amazonaws.com",
+            "PORT": "5432",
+        }
+    }
 
 # Heroku settings
 django_heroku.settings(locals())
