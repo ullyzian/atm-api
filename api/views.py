@@ -1,13 +1,13 @@
+import datetime
+from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.models import Token
 from api.models import Customer, BankAccount, CreditCard, Operation
 from api.serializers import OperationSerializer
-from rest_framework.authtoken.models import Token
-from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404
-import datetime
 
 
 class CreditCardAuthToken(APIView):
@@ -39,8 +39,10 @@ class AccountList(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
+        # get all customers except customer that requested
         customers = Customer.objects.all().exclude(user=request.user.id)
         accounts = []
+        # serialize accounts number
         for customer in customers:
             account = BankAccount.objects.get(customer=customer.id).account
             accounts.append(
@@ -60,6 +62,7 @@ class Withdraw(APIView):
 
     def post(self, request, num, format=None):
         amount = request.data["amount"]
+        # amount parsing
         if len(amount) == 0:
             return Response({"detail": "Inccorect amount"})
         amount = float(amount)
@@ -89,6 +92,7 @@ class Transfer(APIView):
 
     def post(self, request, num, format=None):
         receiver = request.data["receiver"]
+        # amount parsing
         amount = request.data["amount"]
         if len(amount) == 0:
             return Response({"detail": "Inccorect amount"})
@@ -143,8 +147,9 @@ class History(APIView):
     def get(self, request, num, *args, **kwargs):
         # get and check customer requested info
         customer = get_object_or_404(Customer, user=request.user.id)
+        # get all operations and order by latest
         operations = Operation.objects.filter(customer=customer).order_by(
             "-created_at", "-pk"
-        )[0:10]
+        )[0:8]
         serializer = OperationSerializer(operations, many=True)
         return Response(serializer.data)
