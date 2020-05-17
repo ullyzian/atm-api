@@ -19,10 +19,12 @@ class BankAccount(models.Model):
     balance = models.FloatField(default=0.0, blank=False, null=False)
 
     def __str__(self):
-        return self.account
+        return f"{self.customer.user.username} - {self.account}"
 
 
 class CreditCard(models.Model):
+    CARD_TYPE = (("Credit", "Credit"), ("Debit", "Debit"))
+
     number = models.CharField(max_length=16, blank=False, null=False, unique=True)
     expiration = models.DateField()
     account = models.ForeignKey(
@@ -33,21 +35,28 @@ class CreditCard(models.Model):
     )
     cvv = models.IntegerField(blank=False, null=False)
     pin = models.IntegerField(blank=False, null=False)
-    kind = models.CharField(max_length=30)
+    kind = models.CharField(max_length=6, choices=CARD_TYPE)
 
     def __str__(self):
-        return self.number
+        return f"{self.customer.user.username} - {self.number}"
 
 
 class Operation(models.Model):
+    OPERATION_TYPE = (("Withdraw", "Withdraw"), ("Transfer", "Transfer"))
     customer = models.ForeignKey(
         Customer, on_delete=models.CASCADE, blank=False, null=False
     )
     receiver = models.ForeignKey(
-        BankAccount, on_delete=models.CASCADE, blank=False, null=False
+        BankAccount, on_delete=models.CASCADE, blank=True, null=True
     )
     amount = models.FloatField(default=1.0, blank=False, null=False)
-    kind = models.CharField(max_length=30, blank=False, null=False)
+    kind = models.CharField(
+        max_length=8, choices=OPERATION_TYPE, blank=False, null=False
+    )
+    created_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.customer.user.username
+        return f"{self.customer.user.username} - {self.kind}"
+
+    class Meta:
+        get_latest_by = "created_at"
