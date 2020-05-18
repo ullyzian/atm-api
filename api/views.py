@@ -48,7 +48,7 @@ class AccountList(APIView):
             accounts.append(
                 {
                     "label": " ".join(
-                        account[i : i + 4] for i in range(0, len(account), 4)
+                        account[i:i + 4] for i in range(0, len(account), 4)
                     ),
                     "id": account,
                 }
@@ -70,7 +70,9 @@ class Withdraw(APIView):
         # get and check customer requested info
         card = get_object_or_404(CreditCard, number=num)
         customer = get_object_or_404(Customer, user=request.user.id)
-        account = get_object_or_404(BankAccount, pk=card.account.id, customer=customer.id)
+        account = get_object_or_404(
+            BankAccount, pk=card.account.id, customer=customer.id
+        )
 
         # balance validation
         if account.balance > amount:
@@ -101,7 +103,9 @@ class Transfer(APIView):
         # get and check customer requested info
         card = get_object_or_404(CreditCard, number=num)
         customer = get_object_or_404(Customer, user=request.user.id)
-        account = get_object_or_404(BankAccount, pk=card.account.id, customer=customer.id)
+        account = get_object_or_404(
+            BankAccount, pk=card.account.id, customer=customer.id
+        )
 
         # get and check reciever account number
         receiver_account = get_object_or_404(BankAccount, account=receiver)
@@ -135,7 +139,9 @@ class Balance(APIView):
         # get and check customer requested info
         card = get_object_or_404(CreditCard, number=num)
         customer = get_object_or_404(Customer, user=request.user.id)
-        account = get_object_or_404(BankAccount, pk=card.account.id, customer=customer.id)
+        account = get_object_or_404(
+            BankAccount, pk=card.account.id, customer=customer.id
+        )
 
         return Response({"balance": account.balance})
 
